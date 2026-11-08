@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-notebook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate notebook (nbformat)
+        run: |
+          python -m pip install --quiet nbformat
+          python - <<'PY'
+          import nbformat, sys
+          nb = nbformat.read("kaggle-ollama-tunnel.ipynb", as_version=4)
+          nbformat.validate(nb)
+          code_cells = [c for c in nb.cells if c.cell_type == "code"]
+          assert code_cells, "notebook has no code cells"
+          print(f"OK: notebook valid, {len(nb.cells)} cells")
+          PY
+
+      - name: Syntax-check the notebook's Python source (IPython magics stripped)
+        run: |
+          python - <<'PY'
+          import ast, re, nbformat
+          nb = nbformat.read("kaggle-ollama-tunnel.ipynb", as_version=4)
+          MAGIC = re.compile(r"^\s*[!%]")
+          for i, cell in enumerate(c for c in nb.cells if c.cell_type == "code"):
+              py = "\n".join(
+                  "pass  # ipython magic" if MAGIC.match(ln) else ln
+                  for ln in ("\n".join(cell.source)).split("\n")
+              )
+              ast.parse(py, filename=f"<cell {i}>")
+          print("OK: all code cells parse (magics stripped)")
+          PY
+
+      - name: Secret scan (no live tunnel URLs / token literals committed)
+        run: |
+          ! grep -rnE "https://[a-z0-9][a-z0-9-]*\.trycloudflare\.com|gho_[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}" \
+              README.md CHANGELOG.md CONTRIBUTING.md docs/ kaggle-ollama-tunnel.ipynb

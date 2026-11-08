@@ -1,14 +1,24 @@
 # kaggle-ollama-tunnel 🦙🚇
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/GUURUUU/kaggle-ollama-tunnel/actions/workflows/ci.yml/badge.svg)](https://github.com/GUURUUU/kaggle-ollama-tunnel/actions/workflows/ci.yml)
 [![Kaggle](https://img.shields.io/badge/Runtime-Kaggle%20T4%20x2-0085FF?logo=kaggle&logoColor=white)](https://www.kaggle.com/)
 [![Ollama](https://img.shields.io/badge/Served%20by-Ollama-black?logo=ollama&logoColor=white)](https://ollama.com/)
 [![OpenAI Compatible](https://img.shields.io/badge/API-OpenAI%20Compatible-412991?logo=openai&logoColor=white)](https://platform.openai.com/docs/api-reference)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-**Run a full-precision (F16) open LLM on free Kaggle GPUs and expose it to your machine as a public, OpenAI-compatible API — zero servers, zero cost.**
+**Run a full-precision open LLM on free Kaggle GPUs and call it from anywhere through a public OpenAI-compatible API.**
 
-One single notebook cell turns two Kaggle T4s into a hosted inference endpoint behind a Cloudflare Quick Tunnel. Any tool that speaks the OpenAI protocol (Telegram bots, IDE assistants, agents, apps) can talk to it from anywhere on the internet.
+One notebook cell = 2× Kaggle T4 + Ollama + a Cloudflare tunnel. No server, no bill.
+
+**Install (your machine only):**
+
+```bash
+pip install openai   # requests is also fine — that's the whole dependency list
+```
+
+![kaggle-ollama-tunnel demo](docs/demo.gif)
+
+*The GIF shows the real flow: client install → the notebook's live banner → a chat completion call → response.*
 
 ---
 
@@ -24,7 +34,7 @@ One single notebook cell turns two Kaggle T4s into a hosted inference endpoint b
                                            │ cloudflared
                                            ▼ quick tunnel
 ┌────────────────── Your machine ──────────│───────────────┐
-│  Any OpenAI client ── base_url: https://xxxx.trycloudflare.com/v1
+│  Any OpenAI client ── base_url: https://<your-tunnel>.trycloudflare.com/v1
 └──────────────────────────────────────────────────────────┘
 ```
 
@@ -47,7 +57,7 @@ One single notebook cell turns two Kaggle T4s into a hosted inference endpoint b
 ======================================================================
 ✅ OPENAI-COMPATIBLE API IS LIVE
 ======================================================================
-Base URL : https://spa-sealed-roles-candy.trycloudflare.com/v1
+Base URL : https://<ephemeral-tunnel-id>.trycloudflare.com/v1
 API Key  : ollama   (any non-empty string works)
 Model    : abliterated-f16
 ======================================================================
@@ -122,6 +132,14 @@ Run models you're licensed to run and follow the [Kaggle ToS](https://www.kaggle
 ```
 kaggle-ollama-tunnel/
 ├── kaggle-ollama-tunnel.ipynb   # the whole project: one cell, zero external deps (beyond HF hub)
+├── docs/
+│   ├── demo.gif                 # animated walkthrough (above)
+│   └── social-card.png          # 1280x640 card for GitHub Social preview
+├── .github/
+│   ├── workflows/ci.yml         # notebook sanity check on every push
+│   └── ISSUE_TEMPLATE/          # bug + feature templates
+├── CONTRIBUTING.md
+├── CHANGELOG.md
 ├── README.md
 ├── LICENSE
 └── .gitignore
@@ -129,11 +147,13 @@ kaggle-ollama-tunnel/
 
 ## 🤝 Contributing
 
-Ideas in the pipeline / PRs welcome:
-- [ ] Auto-update the README with the generated tunnel URL via artifact
+See [CONTRIBUTING.md](CONTRIBUTING.md) — short version: fork, branch, PR; the maintainer answers every issue within 24 h. First-timers: check the [`good first issue`](https://github.com/GUURUUU/kaggle-ollama-tunnel/labels/good%20first%20issue) label.
+
+Roadmap — PRs welcome:
+- [ ] Auto-update the README with the generated tunnel URL via Kaggle artifact
 - [ ] Named-tunnel support (persistent URL)
 - [ ] Multi-model registry with a model-picker curl command
-- [ ] llm-based watchdog that dumps logs to `/kaggle/working`
+- [ ] Watchdog that dumps logs to `/kaggle/working`
 
 ## 📜 License
 

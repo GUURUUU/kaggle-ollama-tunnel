@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or usage help
+    url: https://github.com/GUURUUU/kaggle-ollama-tunnel/discussions
+    about:
+      Ask anything about running the notebook, swapping models, or pointing your bot at the tunnel.
