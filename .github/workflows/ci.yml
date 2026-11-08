@@ -36,9 +36,10 @@ jobs:
           nb = nbformat.read("kaggle-ollama-tunnel.ipynb", as_version=4)
           MAGIC = re.compile(r"^\s*[!%]")
           for i, cell in enumerate(c for c in nb.cells if c.cell_type == "code"):
+              src = cell.source if isinstance(cell.source, str) else "".join(cell.source)
               py = "\n".join(
                   "pass  # ipython magic" if MAGIC.match(ln) else ln
-                  for ln in ("\n".join(cell.source)).split("\n")
+                  for ln in src.split("\n")
               )
               ast.parse(py, filename=f"<cell {i}>")
           print("OK: all code cells parse (magics stripped)")
