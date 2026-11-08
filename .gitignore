@@ -1,0 +1,22 @@
+# Jupyter
+.ipynb_checkpoints/
+*.nb.html
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Weights & local artifacts
+models/
+*.gguf
+*.safetensors
+cloudflared-linux-amd64.deb
+Modelfile
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
